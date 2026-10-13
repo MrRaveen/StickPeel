@@ -1,0 +1,64 @@
+session_name: stickpeel
+start_directory: ./
+windows:
+  - window_name: root
+    start_directory: ./
+    panes:
+      - blank
+  - window_name: api
+    layout: even-vertical
+    start_directory: ./api
+    panes:
+      - uv run fastapi dev --reload-dir app
+      - blank
+  - window_name: site
+    layout: even-vertical
+    start_directory: ./site
+    panes:
+      - npm run dev -- --port 3000 --strictPort
+      - blank
+  - window_name: app
+    layout: even-vertical
+    start_directory: ./app
+    panes:
+      - npm run dev -- --port 3001 --strictPort
+      - blank
+  - window_name: internal
+    layout: even-vertical
+    start_directory: ./internal
+    panes:
+      - npm run dev -- --port 3002 --strictPort
+      - blank
+
+
+# session_name: launchbase
+# start_directory: ./
+# windows:
+#   - window_name: launchbase
+#     start_directory: ./
+#     panes:
+#       - blank
+#   - window_name: api
+#     layout: even-vertical
+#     start_directory: ./api
+#     panes:
+#       - make run
+#       - blank
+#   - window_name: site
+#     layout: even-vertical
+#     start_directory: ./site
+#     panes:
+#       - make run
+#       - blank
+#   - window_name: app
+#     layout: even-vertical
+#     start_directory: ./app
+#     panes:
+#       - make run
+#       - blank
+#   - window_name: internal
+#     layout: even-vertical
+#     start_directory: ./internal
+#     panes:
+#       - make run
+#       - blank

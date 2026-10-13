@@ -1,0 +1,124 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-toml
+      - id: check-yaml
+        args:
+          - --unsafe
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args:
+          # Preserve intentional two-space line breaks in markdown.
+          - --markdown-linebreak-ext=md
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.0
+    hooks:
+      - id: ruff-check
+        name: ruff check (api)
+        args:
+          - --fix
+        files: ^api/
+      - id: ruff-format
+        name: ruff format (api)
+        files: ^api/
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright (api)
+        language: system
+        files: ^api/
+        entry: bash -c 'cd api && uv run pyright'
+        pass_filenames: false
+      - id: requirements
+        name: export requirements (api)
+        language: system
+        files: ^api/uv\.lock$
+        pass_filenames: false
+        entry: bash -c 'cd api && uv export --no-dev --no-hashes -o requirements.txt'
+      - id: requirements-test
+        name: export requirements-test (api)
+        language: system
+        files: ^api/uv\.lock$
+        pass_filenames: false
+        entry: bash -c 'cd api && uv export --no-hashes -o requirements-test.txt'
+      - id: oxfmt-app
+        name: oxfmt (app)
+        language: system
+        files: ^app/.*\.(js|jsx|ts|tsx|json|md|yaml|yml|css|scss|sass)$
+        entry: bash -c 'cd app && npx oxfmt --no-error-on-unmatched-pattern "${@#app/}"' --
+      - id: oxlint-app
+        name: oxlint (app)
+        language: system
+        files: ^app/.*\.(js|jsx|ts|tsx)$
+        entry: bash -c 'cd app && npx oxlint --fix --deny-warnings --no-error-on-unmatched-pattern "${@#app/}"' --
+      # Regenerating the route tree is only needed when a route file changed;
+      # splitting it out keeps it off the common edit-a-component commit.
+      - id: routes-app
+        name: routes (app)
+        language: system
+        files: ^app/src/routes/.*\.(ts|tsx)$
+        pass_filenames: false
+        entry: bash -c 'cd app && npx tsr generate'
+      - id: type-check-app
+        name: type-check (app)
+        language: system
+        files: ^app/.*\.(ts|tsx)$
+        pass_filenames: false
+        # The guard covers a fresh clone, where the gitignored tree is absent.
+        entry: bash -c 'cd app && { [ -f src/routeTree.gen.ts ] || npx tsr generate; } && npx tsc --noEmit'
+      - id: oxfmt-site
+        name: oxfmt (site)
+        language: system
+        files: ^site/.*\.(js|jsx|ts|tsx|json|md|yaml|yml|css|scss|sass)$
+        entry: bash -c 'cd site && npx oxfmt --no-error-on-unmatched-pattern "${@#site/}"' --
+      - id: oxlint-site
+        name: oxlint (site)
+        language: system
+        files: ^site/.*\.(js|jsx|ts|tsx)$
+        entry: bash -c 'cd site && npx oxlint --fix --deny-warnings --no-error-on-unmatched-pattern "${@#site/}"' --
+      # Regenerating the route tree is only needed when a route file changed;
+      # splitting it out keeps it off the common edit-a-component commit.
+      - id: routes-site
+        name: routes (site)
+        language: system
+        files: ^site/src/routes/.*\.(ts|tsx)$
+        pass_filenames: false
+        entry: bash -c 'cd site && npx tsr generate'
+      - id: type-check-site
+        name: type-check (site)
+        language: system
+        files: ^site/.*\.(ts|tsx)$
+        pass_filenames: false
+        # The guard covers a fresh clone, where the gitignored tree is absent.
+        entry: bash -c 'cd site && { [ -f src/routeTree.gen.ts ] || npx tsr generate; } && npx tsc --noEmit'
+      - id: oxfmt-internal
+        name: oxfmt (internal)
+        language: system
+        files: ^internal/.*\.(js|jsx|ts|tsx|json|md|yaml|yml|css|scss|sass)$
+        entry: bash -c 'cd internal && npx oxfmt --no-error-on-unmatched-pattern "${@#internal/}"' --
+      - id: oxlint-internal
+        name: oxlint (internal)
+        language: system
+        files: ^internal/.*\.(js|jsx|ts|tsx)$
+        entry: bash -c 'cd internal && npx oxlint --fix --deny-warnings --no-error-on-unmatched-pattern "${@#internal/}"' --
+      # Regenerating the route tree is only needed when a route file changed;
+      # splitting it out keeps it off the common edit-a-component commit.
+      - id: routes-internal
+        name: routes (internal)
+        language: system
+        files: ^internal/src/routes/.*\.(ts|tsx)$
+        pass_filenames: false
+        entry: bash -c 'cd internal && npx tsr generate'
+      - id: type-check-internal
+        name: type-check (internal)
+        language: system
+        files: ^internal/.*\.(ts|tsx)$
+        pass_filenames: false
+        # The guard covers a fresh clone, where the gitignored tree is absent.
+        entry: bash -c 'cd internal && { [ -f src/routeTree.gen.ts ] || npx tsr generate; } && npx tsc --noEmit'
